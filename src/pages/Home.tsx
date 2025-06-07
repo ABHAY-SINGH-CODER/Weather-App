@@ -1,9 +1,10 @@
+import React, { useState, useEffect } from 'react';
 import {
   IonContent,
   IonPage,
 } from '@ionic/react';
-import React, { useState, useEffect } from 'react';
 import './Home.css';
+import { Geolocation } from '@capacitor/geolocation';
 
 const Home: React.FC = () => {
   const [weather, setWeather] = useState({
@@ -29,7 +30,7 @@ const Home: React.FC = () => {
   };
 
   const fetchWeatherByCoords = async (lat: number, lon: number) => {
-    const apiKey = '3b0da6da8a2c06abef2bb3a9c6bae149'; 
+    const apiKey = '3b0da6da8a2c06abef2bb3a9c6bae149'; // Replace with your API key
     try {
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
@@ -42,16 +43,18 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
+    const getLocationAndFetchWeather = async () => {
+      try {
+        const position = await Geolocation.getCurrentPosition();
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         fetchWeatherByCoords(lat, lon);
-      },
-      (error) => {
+      } catch (error) {
         console.error('Location error:', error);
       }
-    );
+    };
+
+    getLocationAndFetchWeather();
   }, []);
 
   return (
