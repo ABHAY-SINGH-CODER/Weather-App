@@ -43,18 +43,20 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    const getLocationAndFetchWeather = async () => {
+    const requestPermissionAndFetchLocation = async () => {
       try {
+        await Geolocation.requestPermissions(); // ✅ Request location permission
+
         const position = await Geolocation.getCurrentPosition();
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         fetchWeatherByCoords(lat, lon);
       } catch (error) {
-        console.error('Location error:', error);
+        console.error('Error getting location:', error);
       }
     };
 
-    getLocationAndFetchWeather();
+    requestPermissionAndFetchLocation();
   }, []);
 
   return (
